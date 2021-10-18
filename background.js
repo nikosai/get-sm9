@@ -38,8 +38,6 @@ chrome.contextMenus.create({
   visible: true
 });
 
-let prev;
-
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   let url;
   switch (info.menuItemId) {
@@ -51,7 +49,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       break;
   }
   if (url === undefined) return;
-  // chrome.tabs.sendMessage(tab.id, { id: url2id(url) });
   const id = url2id(url);
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
