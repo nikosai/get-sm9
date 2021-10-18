@@ -38,8 +38,6 @@ chrome.contextMenus.create({
   visible: true
 });
 
-let prev;
-
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   let url;
   switch (info.menuItemId) {
@@ -51,14 +49,10 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       break;
   }
   if (url === undefined) return;
-  // chrome.tabs.sendMessage(tab.id, { id: url2id(url) });
   const id = url2id(url);
-  const divID = "nikosai-extension-get-sm9-toast"
-  console.log(tab.id);
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    args: [id, divID],
-    function: (id, divID) => {
+  chrome.tabs.executeScript(tab.id, {
+    code: `(()=>{
+      const id = "${id}";
       if (navigator.clipboard) {
         navigator.clipboard.writeText(id);
       } else {
@@ -69,38 +63,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         document.execCommand('copy');
         document.body.removeChild(input);
       }
-      let toast;
-      if (!document.getElementById(divID)) {
-        toast = document.createElement("div");
-        toast.id = divID;
-        toast.style.transition = "1s";
-        toast.style.zIndex = "999";
-        toast.style.position = "fixed";
-        toast.style.bottom = "10px";
-        toast.style.right = "10px";
-        toast.style.padding = "5px";
-        toast.style.fontSize = "15px";
-        toast.style.borderRadius = "10px";
-        toast.style.backgroundColor = "#252525";
-        toast.style.color = "#ffffff";
-        toast.style.opacity = "0";
-        document.body.insertBefore(toast, document.body.firstChild);
-        setTimeout(() => {
-          toast.style.opacity = "0.8";
-        }, 10);
-      } else {
-        toast = document.getElementById(divID);
-        toast.style.opacity = "0.8";
-      }
-      toast.innerHTML = `“${id}”をコピーしました`;
-    }
+      })();`
   });
-  if (prev) clearTimeout(prev);
-  prev = setTimeout(() => {
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      args: [divID],
-      function: (divID) => { document.getElementById(divID).style.opacity = '0'; }
-    })
-  }, 5000);
 });

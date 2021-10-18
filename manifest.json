@@ -1,18 +1,19 @@
 {
   "name": "右クリックでURL最終部をコピー",
   "description": "An extension to copy the last part of URL of the page.",
-  "version": "0.1",
-  "manifest_version": 3,
+  "version": "0.2",
+  "manifest_version": 2,
   "permissions": [
     "contextMenus",
     "clipboardWrite",
-    "activeTab",
-    "scripting"
+    "activeTab"
   ],
   "icons": {
     "128": "128.png"
   },
   "background": {
-    "service_worker": "background.js"
+    "scripts": [
+      "background.js"
+    ]
   }
 }
